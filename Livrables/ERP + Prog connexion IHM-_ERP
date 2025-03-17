@@ -1,0 +1,95 @@
+1.Création ERP sur ODOO:
+  a.Déploiement du micro service:
+Ouvrer un navigateaur internet (type chrome, explorer, ...) et saisissez ceci dans la barre d'URL: http://172.31.10.137:9000
+Vous arrivez sur une page de connexion, rentrez les identifiant suivant: USERNAME=admin et PASSWORD=portainer3556
+Une fois sur portainer.io allez sélectionner l'environnement local au milieu puis clicker sur l'onglet Stacks dans le menue déroulant situé à gauche
+Une fois sur l'onglet Stack ouvert sélectionner le bouton Add Stack situé en haut à droite afin d'en créer un 
+une fois dans la page de création du stack commencer par écrire un titre, ce champ doit être composé de caractères alphanumériques minuscules, '_' ou '-' (par exemple 'mon-nom' ou 'abc-123')
+Après cela, veuillez sélectionner la méthode de construction qui est WEB EDITOR
+Ensuite dans la partie WEB EDITOR, veuillez rentrer ce programme:
+      version: '2'
+    services:
+     web:
+       image: odoo:15
+       depends_on:
+         - mydb
+       ports:
+         - "8026:8069"
+       environment:
+       - HOST=mydb
+       - USER=odoo
+       - PASSWORD=myodoo
+     mydb:
+       image: postgres:13
+       environment:
+           - POSTGRES_DB=postgres
+           - POSTGRES_PASSWORD=myodoo
+           - POSTGRES_USER=odoo
+Puis clicker sur deploy the satcks
+Enfin, allez sur l'onglet container afin de controler que vous aillez bien vos deux container
+  b.Création de la base de donnée ODOO
+Ouvrer un navigateaur internet (type chrome, explorer, ...) et saisissez ceci dans la barre d'URL: http://172.31.10.137:8026
+Vous arriverez sur la base de création de la base de donnée, veuillez rentrez ces informations:
+  Master Password: MSIR5
+  Databas Name: YOURT
+  Email: etienne.jugeur1209@gmail.com
+  Password: vxrq-rwjs-ejpz
+  Phone number: 
+  Language: French/Français
+  Country: France
+  Demo data: cocher 
+Appuyer sur Create database
+Vous allez être rediriger sur l'ERP ODOO où vous allez pouvoir clicker sur le menu HOME situé en haut à gauche et représenté par quatre petit carré
+Dans ce menu HOME, sélectionner Application 
+Une fois sur la page application, télécharger les application Stock et Fabrication 
+Après vous pouvez allez dans la page Paramètre situé dans un onglet du menu HOME pour configurer votre entreprise ainsi que vos profils 
+Pour modifier vos profils vous avez une partie de la page nommé utilisateur et dans cette partie vous avec un lien noté ->Gérer les utilisateurs 
+Sur cette nouvelle page vous pouvez voir les utilisateurs actuellement créer, si vous souhaitez en ajoutez vous pouvez en cliquant sur le bouton Créer en haut à droite et pour les modifier clicker simplement sur les utilisateur et d'appuyer sur modifier toujours en heut à droite 
+Pour modifier les informations de l'entreprise sélectionner, séléctionner l'onglet paramètre dans le menu HOME puis dans la page allez dans la partie Société puis sélectionner ->Gerer des société
+Vous pouvze en créer à l'aide du bouton créer en haut à gauche ou modifier votre entreprise en la sélectionnant pouis en faisant modifier en haut à gauche 
+Pour créer des articles, sélectionner dans le menu déroulant HOME, l'onglet Stock
+Une fois sur la page, allez sur Articles situé en haut, un menu déroulant s'ouvre et sélectionner de nouveau article
+Dans la fenêtre article, vous pouvez créer des articles (en haut à gauche) ou modifier les existants 
+Pour créer des ordres de fabication, allez sélectionner Fabrication dans HOME
+Sur cette page vous visualiser les OF (Ordres de Fabrication) qui sont en Brouillon, Confirmé et En Cours  
+A partir de là, vous pouvez créer des OF, ou en modifier en sélectionnant ceux existants
+Pour visualiser des OF à l'état de Fait, il vous suffit de supprimer le filtre A Faire dans la barre de recherche en haut à droite 
+Une fois votre base de donnée effectuer, réaliser un back up en vous déconnectant
+Ensuite sélectionner Gestion des bases de données,vous arrivez sur une page avec un bouton backup à coté du nom de votre DB (Data Base), appuyer dessus puis de nouveau sur backup sur le popup ouvert, le téléchargement s'effectue 
+  c. Resataurer base de donnée
+Rentrez votre l'adresse IP et le port dans la barre d'URL 
+Appuyer sur restore data base puis noté votre nom et mettez votre fichier backup selectionner bien que le db est une copie 
+
+2.Création du programme
+  a.Connexion IHM
+Afin de faire la connexion à l'ERP, il faut inscrire l'URL, la base de donnée, l'indentifiant et le mot de passe dans ds variables:
+  # Connexion à l'ERP Odoo
+  ODOO_URL = "http://172.31.10.137:8026"
+  ODOO_DB = "YOURT"
+  ODOO_USER = "etienne.jugeur1209@gmail.com"
+  ODOO_PASSWORD = "vxrq-rwjs-ejpz"
+Ensuite, il faut réaliser la connexion au serveur ODOO via le protocole XMLRPC:
+def __init__(self, username, password):
+        self.common = xmlrpc.client.ServerProxy(f'{ODOO_URL}/xmlrpc/2/common')
+        self.uid = self.common.authenticate(ODOO_DB, username, password, {})
+        self.models = xmlrpc.client.ServerProxy(f'{ODOO_URL}/xmlrpc/2/object')
+        
+        if not self.uid:
+            raise Exception("Échec de la connexion à Odoo")
+Après, la recupération des informations de l'entreprise:
+def get_company_info(self):
+        result = self.models.execute_kw(
+            ODOO_DB, self.uid, ODOO_PASSWORD, 'res.company', 'search_read', [[]], {'fields': ['name', 'street', 'city', 'logo']})
+        if result:
+            return result[0]  # Retourne la première entreprise
+        return None
+Les informations des articles:
+ef get_all_products(self):
+        products = self.models.execute_kw(
+            ODOO_DB, self.uid, ODOO_PASSWORD, 'product.product', 'search_read', [[]], 
+            {'fields': ['name', 'image_1920', 'qty_available', 'list_price']})
+        return products
+La mise a jour des OF:
+def update_manufacturing_order_qty(self, order_id, new_qty):
+        self.models.execute_kw(
+            ODOO_DB, self.uid, ODOO_PASSWORD, 'mrp.production', 'write', [[order_id], {'product_qty': new_qty}])
