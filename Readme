@@ -1,4 +1,5 @@
 Objectifs :
+__________
 
     F1 : Connexion à l'ERP Odoo (utiliser un login/pwd dédié à la production)
     F2 : Visualiser la fiche de votre entreprise
