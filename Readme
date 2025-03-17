@@ -1,0 +1,7 @@
+Objectifs :
+
+    F1 : Connexion à l'ERP Odoo (utiliser un login/pwd dédié à la production)
+    F2 : Visualiser la fiche de votre entreprise
+    F3 : Visualiser la liste de vos produits avec leurs caratéristiques et image (Saisie des Articles dans Odoo)
+    F4 : Visualiser la liste des Ordres de Fabrication de ces produits (Saisie des OF dans Odoo) si possible en sélectionnant l'état (Confirmé, En cours, Fait, Annulé)
+    F5 : Pour les OF Confirmé permettre la modification de la quantité produite (passage à En cours puis Fait quand la totalité des produits ont été fabriqué)
