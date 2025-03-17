@@ -1,0 +1,288 @@
+| Ensemble des etapes du projet ERP groupe 6 |
+ --------------------------------------------
+  
+Partie IHM :
+-----------
+
+1) Prérequis avant le développement :
+------------------------------------
+- Avoir un OS LINUX (Utiliser une VM DEBIAN si l'OS natif n'est pas LINUX).
+- Ouvrir le terminal de commande, vérifier si python3 est installé.
+- Ouvrir VSCode (le développement se feras ici) et vérifier que le compte GITHub est bien connecté.
+
+
+2) Analyse avant le développement (Rédiger un brouillon sur papier pour visualiser se qu'on développe) :
+---------------------------------------------------------------------------------------------------
+- Connaitre le nombre de fenêtre à développer.
+- Connaitre le nombre de fonction à développer :
+                                                F1 : Connexion à l'ERP Odoo (utiliser un login/pwd dédié à la production)
+                                                F2 : Visualiser la fiche de votre entreprise
+                                                F3 : Visualiser la liste de vos produits avec leurs caratéristiques et image (Saisie des Articles dans Odoo)
+                                                F4 : Visualiser la liste des Ordres de Fabrication de ces produits (Saisie des OF dans Odoo) si possible en sélectionnant l'état (Confirmé, En cours, Fait, Annulé)
+                                                F5 : Pour les OF Confirmé permettre la modification de la quantité produite (passage à En cours puis Fait quand la totalité des produits ont été fabriqué)
+
+
+3) Développement de l'interface graphique sous VSCode :
+---------------------------------------------------
+3.1 Développer une page de connexion avec un login et un mot de passe.
+===============================================================================================================================================================================================================================================================
+class LoginPage:
+    def __init__(self, root): #Création de la fonction 
+        self.root = root 
+        self.root.title("Connexion à Odoo") #Nommer la page de connexion
+        self.root.geometry("400x300") #Dimensionner la page de connexion
+        self.root.config(bg="#f3f8ff")
+        
+        self.username_label = tk.Label(root, text="Identifiant", font=("Helvetica", 12), bg="#f3f8ff") #Création de la ligne Identifiant avec la police et le fond.
+        self.username_label.pack(pady=10) #Définir le décalage par rapport au bord de la page.
+
+        self.username_entry = tk.Entry(root, font=("Helvetica", 12), width=25)
+        self.username_entry.pack(pady=10) #Définir le décalage par rapport au bord de la page.
+
+        self.password_label = tk.Label(root, text="Mot de passe", font=("Helvetica", 12), bg="#f3f8ff") #Création de la ligne "Mot de passe" avec la police et le fond.
+        self.password_label.pack(pady=10) #Définir le décalage par rapport au bord de la page.
+
+        self.password_entry = tk.Entry(root, font=("Helvetica", 12), width=25, show="*") #Création de la ligne "Mot de passe" avec la police et le fond.
+        self.password_entry.pack(pady=10) #Définir le décalage par rapport au bord de la page.
+
+        self.login_button = tk.Button(root, text="Se connecter", font=("Helvetica", 12, "bold"), bg="#a8d8f0", fg="black", bd=0, relief="flat", width=25, height=2, activebackground="#9fd3e3", activeforeground="black", command=self.login) #Création du bouton "Se connecter" avec la police et le fond.
+        self.login_button.pack(pady=20) #Définir le décalage par rapport au bord de la page.
+
+    def login(self):
+        username = self.username_entry.get() #Définie la variable "username" qui permet de rentrer l'Identifiant.
+        password = self.password_entry.get() #Définie la variable "password" qui permet de rentrer le Mot de passe.
+
+        if not username or not password: #Si l'Identifiant ou le Mot de passe n'est pas correct alors le message s'affiche.
+            messagebox.showerror("Erreur", "Veuillez entrer un identifiant et un mot de passe.")
+            return
+   try:
+            self.odoo = OdooConnector(username, password) #Utiliser l'indentifiant et le mot de passe de Odoo
+            messagebox.showinfo("Connexion réussie", "Vous êtes connecté à Odoo.")
+            self.root.destroy()  # Ferme la fenêtre de connexion après la réussite de la connexion
+            self.open_main_page()  # Ouvre la fenêtre principale
+        except Exception as e:
+            messagebox.showerror("Erreur de connexion", str(e)) #Si aucune connexion alors il affiche un message d'erreur
+
+   def open_main_page(self):
+        main_window = tk.Tk() #Ouvre une autre page pour confirmer la connexion
+        MainPage(main_window, self.odoo) 
+        main_window.mainloop() #Fait tourner en boucle la page
+
+========================================================================================================================================================================================================================================================================
+
+3.2 Recevoir un message pour confirmer ma connexion à Odoo.
+================================================================================
+class MainPage:
+    def __init__(self, root, odoo_connector):
+        self.root = root
+        self.root.title("ERP Odoo - Yaourts")
+        self.root.geometry("800x600") #Dimensionner la page
+        self.root.config(bg="#f3f8ff")
+        self.odoo = odoo_connector
+
+        self.create_buttons()
+===============================================================================
+
+3.3 Développer une 2ème page avec un menu composé de plusieurs boutons :
+                                                                      - Afficher la fiche entreprise
+                                                                      - Afficher tous les produits
+                                                                      - Afficher les ordres de fabrication
+==================================================================================================================================================
+	tk.Button(self.root, text="Afficher la fiche entreprise", command=self.show_company_info, **button_style).pack(pady=20)
+        tk.Button(self.root, text="Afficher tous les produits", command=self.show_all_products, **button_style).pack(pady=20)
+        tk.Button(self.root, text="Afficher les ordres de fabrication", command=self.show_manufacturing_orders, **button_style).pack(pady=20)
+
+En cas d'erreur :
+=================================================================================================================================================
+def show_company_info(self):
+        company_info = self.odoo.get_company_info()
+        if not company_info:
+            messagebox.showerror("Erreur", "Impossible de récupérer les informations de l'entreprise.")
+            return
+==================================================================================================================================================
+
+3.3.1 Lorsque je clique sur le bouton "Afficher la fiche entreprise": 
+- Une fenêtre s'ouvre avec le nom, l'adresse et le logo de l'entreprise.
+======================================================================================================================================
+company_window = tk.Toplevel(self.root)
+        company_window.title("Fiche Entreprise")
+        company_window.config(bg="#f3f8ff")
+
+        label_style = {"font": ("Helvetica", 12), "bg": "#f3f8ff"}
+
+        tk.Label(company_window, text=f"Nom: {company_info['name']}", font=("Helvetica", 14, "bold"), bg="#f3f8ff").pack(pady=5)
+        tk.Label(company_window, text=f"Adresse: {company_info['street']}, {company_info['city']}", **label_style).pack(pady=5)
+
+if company_info.get("logo"):
+            logo_data = base64.b64decode(company_info["logo"])
+            image = Image.open(BytesIO(logo_data))
+            image = image.resize((150, 150), Image.LANCZOS)
+            photo = ImageTk.PhotoImage(image)
+
+            label_logo = tk.Label(company_window, image=photo, bg="#f3f8ff")
+            label_logo.image = photo
+            label_logo.pack(pady=10)
+======================================================================================================================================
+
+3.3.2 Lorsque je clique sur le bouton "Afficher tous les produits":
+- Une fenêtre s'ouvre avec une liste des produits.
+- Dans la liste des produits, je dois voir la photo, le nom du produit, la quantité en stock et le prix.
+=====================================================================================================================================
+ def show_all_products(self):
+        products = self.odoo.get_all_products()
+        if not products:
+            messagebox.showerror("Erreur", "Aucun produit trouvé.")
+            return
+
+        products_window = tk.Toplevel(self.root)
+        products_window.title("Liste des Produits")
+        products_window.config(bg="#f3f8ff")
+
+        for product in products:
+            product_name = product['name']
+            image_base64 = product.get('image_1920')
+            qty_available = product.get('qty_available', 0)
+            list_price = product.get('list_price', 0)
+
+            frame = tk.Frame(products_window, bg="white", bd=2, relief="groove", padx=10, pady=10)
+            frame.pack(pady=10, fill="x")
+
+            if image_base64:
+                image_data = base64.b64decode(image_base64)
+                image = Image.open(BytesIO(image_data))
+                image.thumbnail((100, 100))
+                photo = ImageTk.PhotoImage(image)
+                
+                label_image = tk.Label(frame, image=photo)
+                label_image.image = photo
+                label_image.pack(side=tk.LEFT)
+
+            tk.Label(frame, text=product_name, font=("Helvetica", 12, "bold"), bg="white").pack(side=tk.LEFT, padx=10)
+            tk.Label(frame, text=f"Qté: {qty_available}", font=("Helvetica", 10), bg="white").pack(side=tk.LEFT, padx=10)
+            tk.Label(frame, text=f"Prix: {list_price} €", font=("Helvetica", 10), bg="white").pack(side=tk.LEFT, padx=10)
+=========================================================================================================================================================
+
+3.3.3 Lorsque je clique sur le bouton "Afficher les ordres de fabrication":
+- Une fenêtre s'ouvre avec un tableau composé de cinq colonnes :
+					                       - ID
+							       - Nom
+							       - Etat
+							       - Quantité
+							       - Date Début
+========================================================================================================================================================
+    def show_manufacturing_orders(self):
+        self.manufacturing_orders = self.odoo.get_manufacturing_orders()
+        if not self.manufacturing_orders:
+            messagebox.showerror("Erreur", "Aucun ordre de fabrication trouvé.")
+            return
+
+        if hasattr(self, 'manufacturing_window') and self.manufacturing_window.winfo_exists():
+            self.manufacturing_window.lift()
+        else:
+            self.manufacturing_window = tk.Toplevel(self.root)
+            self.manufacturing_window.title("Ordres de Fabrication")
+            self.manufacturing_window.config(bg="#f3f8ff")
+
+            self.tree = ttk.Treeview(self.manufacturing_window, columns=("ID", "Nom", "État", "Quantité", "Date Début"), show="headings", height=10)
+            self.tree.pack(pady=20, padx=10, fill="x")
+
+=============================================================================================================================================================
+
+3.3.4 Sous le tableau créer deux boutons : 
+				      - Passer à Fait
+                                      - Modifier la Quantité
+                  
+3.3.4.1 Lorsque je clique sur le bouton "Modifier la Quantité":
+===========================================================================================================================================================================
+            self.tree.heading("ID", text="ID")
+            self.tree.heading("Nom", text="Nom")
+            self.tree.heading("État", text="État")
+            self.tree.heading("Quantité", text="Quantité")
+            self.tree.heading("Date Début", text="Date Début")
+
+            self.tree.column("ID", width=50, anchor="center")
+            self.tree.column("Nom", width=200, anchor="w")
+            self.tree.column("État", width=100, anchor="center")
+            self.tree.column("Quantité", width=100, anchor="center")
+            self.tree.column("Date Début", width=150, anchor="center")
+
+            self.populate_orders()
+
+            modify_button = tk.Button(self.manufacturing_window, text="Passer à Fait", font=("Helvetica", 12, "bold"), bg="#a8f0a8", fg="black", command=self.pass_to_done)
+            modify_button.pack(pady=10)
+
+==================================================================================================================================================================================
+
+3.3.4.2 Lorsque je clique sur le bouton "Passer à Fait":
+===================================================================================================================================================================================
+            quantity_button = tk.Button(self.manufacturing_window, text="Modifier la Quantité", font=("Helvetica", 12, "bold"), bg="#ffda88", fg="black", command=self.modify_quantity)
+            quantity_button.pack(pady=10)
+
+    def pass_to_done(self):
+        selected_item = self.tree.selection()
+        if not selected_item:
+            messagebox.showerror("Erreur", "Veuillez sélectionner un ordre de fabrication.")
+            return
+
+        order_id = self.tree.item(selected_item)['values'][0]
+        current_state = self.tree.item(selected_item)['values'][2]
+
+        if current_state != "confirmed":
+            messagebox.showerror("Erreur", "L'ordre de fabrication sélectionné n'est pas confirmé.")
+            return
+
+        self.odoo.update_manufacturing_order_state(order_id, "done")
+        messagebox.showinfo("Succès", "L'état de l'ordre a été changé en 'Fait'.")
+        self.refresh_orders()
+
+    def modify_quantity(self):
+        selected_item = self.tree.selection()
+        if not selected_item:
+            messagebox.showerror("Erreur", "Veuillez sélectionner un ordre de fabrication.")
+            return
+
+        order_id = self.tree.item(selected_item)['values'][0]
+        current_qty = self.tree.item(selected_item)['values'][3]
+
+        new_qty = simpledialog.askinteger("Modifier la quantité", "Entrez la nouvelle quantité", initialvalue=current_qty)
+
+        if new_qty is not None:
+            self.odoo.update_manufacturing_order_qty(order_id, new_qty)
+            messagebox.showinfo("Succès", "La quantité a été mise à jour.")
+            self.refresh_orders()
+
+    def populate_orders(self):
+        for order in self.manufacturing_orders:
+            order_name = order['name']
+            state = order['state']
+            product_qty = order['product_qty']
+            start_date = order['date_planned_start']
+            order_id = order['id']
+
+            self.tree.insert("", "end", values=(order_id, order_name, state, product_qty, start_date))
+
+    def refresh_orders(self):
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+        self.manufacturing_orders = self.odoo.get_manufacturing_orders()
+        self.populate_orders()
+========================================================================================================================================================================================================================
+
+3.4 Permet de faire tourner en boucle 
+=====================================
+if __name__ == "__main__":
+    root = tk.Tk()
+    login_page = LoginPage(root)
+    root.mainloop()
+==================================
+
+
+
+
+
+
+
+
+
+
+
