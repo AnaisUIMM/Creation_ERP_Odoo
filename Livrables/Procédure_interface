@@ -1,7 +1,7 @@
 Utilisation de l'IHM:
 
 Démarer le programe avec le bouton play situé en haut à gauche dans VSD (Visual Studio Code)
-Une page de connexion apparaît, rentrer les identifiants suivant: ID: etienne.jugeur1209@gmail.com MDP: vxrq-rwjs-ejpz
+Une page de connexion apparaît, rentrer les identifiants suivant: ID: xxx MDP: xxxx
 Appyez sur connexion, un message apparait pour vous dire que vous êtes bien connecté à ODOO, clicker sur ok
 Vous arrivez sur la page principal qui est composé de 3 bouton, un bouton pour afficher la fiche entreprise (inforamtions de l'entreprise avec le logo), un bouton afficher les articles (les articles fabriqués par l'entreprise) et un bouton pour les ordres de fabrication
 Si vous allez sur la partie ordre de fabrication, vous pouver les visualiser et modifier la quantité ceux qui sont en Brouillon, en Confirmé et En Cours
