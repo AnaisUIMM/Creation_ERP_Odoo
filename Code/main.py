@@ -6,7 +6,7 @@ from io import BytesIO
 from PIL import Image, ImageTk
 
 # Connexion à l'ERP Odoo
-ODOO_URL = "http://172.31.10.137:8026"
+ODOO_URL = "http://x.x.x.x"
 ODOO_DB = "YOURT"
 ODOO_USER = "x" #Mail
 ODOO_PASSWORD = "x"
