@@ -23,17 +23,17 @@ Ensuite dans la partie WEB EDITOR, veuillez rentrer ce programme:
        image: postgres:13
        environment:
            - POSTGRES_DB=postgres
-           - POSTGRES_PASSWORD=myodoo
-           - POSTGRES_USER=odoo
+           - POSTGRES_PASSWORD=xxx
+           - POSTGRES_USER=xxx
 Puis clicker sur deploy the satcks
 Enfin, allez sur l'onglet container afin de controler que vous aillez bien vos deux container
   b.Création de la base de donnée ODOO
 Ouvrer un navigateaur internet (type chrome, explorer, ...) et saisissez ceci dans la barre d'URL: http://172.31.10.137:8026
 Vous arriverez sur la base de création de la base de donnée, veuillez rentrez ces informations:
-  Master Password: MSIR5
-  Databas Name: YOURT
-  Email: etienne.jugeur1209@gmail.com
-  Password: vxrq-rwjs-ejpz
+  Master Password: xxx
+  Databas Name: xxx
+  Email: xxx@gmail.com
+  Password: xxxx
   Phone number: 
   Language: French/Français
   Country: France
@@ -64,10 +64,10 @@ Appuyer sur restore data base puis noté votre nom et mettez votre fichier backu
   a.Connexion IHM
 Afin de faire la connexion à l'ERP, il faut inscrire l'URL, la base de donnée, l'indentifiant et le mot de passe dans ds variables:
   # Connexion à l'ERP Odoo
-  ODOO_URL = "http://172.31.10.137:8026"
-  ODOO_DB = "YOURT"
-  ODOO_USER = "etienne.jugeur1209@gmail.com"
-  ODOO_PASSWORD = "vxrq-rwjs-ejpz"
+  ODOO_URL = "http://x. X. X. X"
+  ODOO_DB = "xxx"
+  ODOO_USER = "xxx@gmail.com"
+  ODOO_PASSWORD = "xxx"
 Ensuite, il faut réaliser la connexion au serveur ODOO via le protocole XMLRPC:
 def __init__(self, username, password):
         self.common = xmlrpc.client.ServerProxy(f'{ODOO_URL}/xmlrpc/2/common')
