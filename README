@@ -1,37 +1,45 @@
-# 🎯 Objectifs du Projet  
 ---
 
-## 🔧 Fonctionnalités principales
+# 🎯 Objectifs du Projet
 
-### **F1 — Connexion à l'ERP Odoo**
-Connexion sécurisée via un **login/mot de passe dédié à la production**.
+---
 
-### **F2 — Consultation de la fiche entreprise**
-Affichage des informations de votre société directement depuis Odoo.
+## 🔧 F1 — Connexion à l’ERP Odoo  
+Connexion sécurisée à l’ERP via un identifiant et un mot de passe **dédiés à la production**, garantissant un accès contrôlé et isolé des environnements de test.
 
-### **F3 — Liste des produits**
-Visualisation de tous vos produits avec :
-- leurs caractéristiques,
-- leur image,
-- leurs informations techniques.  
-*(Correspond à la saisie des Articles dans Odoo)*
+---
 
-### **F4 — Liste des Ordres de Fabrication (OF)**
-Affichage des OF liés aux produits, avec possibilité de filtrer par état :
-- 🟦 Confirmé  
-- 🟧 En cours  
-- 🟩 Fait  
-- 🟥 Annulé  
-*(Correspond à la saisie des OF dans Odoo)*
+## 🏢 F2 — Visualisation de la fiche entreprise  
+Affichage clair et structuré des informations de votre société :  
+nom, adresse, logo, contacts, données administratives…
 
-### **F5 — Mise à jour des OF Confirmés**
-Pour les OF en état **Confirmé** :
-- modification de la quantité produite,
-- passage automatique à **En cours**,  
+---
+
+## 📦 F3 — Consultation des produits  
+Accès à la liste complète des produits avec :  
+- leurs caractéristiques techniques,  
+- leurs informations commerciales,  
+- leur image.  
+
+(Correspond à la saisie des articles dans Odoo.)
+
+---
+
+## 🏭 F4 — Liste des Ordres de Fabrication (OF)  
+Affichage des OF associés aux produits, avec possibilité de filtrer selon leur état :  
+- Confirmé  
+- En cours  
+- Fait  
+- Annulé  
+
+(Correspond à la saisie des OF dans Odoo.)
+
+---
+
+## ✏️ F5 — Mise à jour des OF Confirmés  
+Pour les OF en état **Confirmé**, l’utilisateur peut modifier la quantité à produire.  
+Le système gère automatiquement :  
+- le passage à **En cours**,  
 - puis à **Fait** lorsque la production est terminée.
 
 ---
-
-## 🖼️ Aperçu de l’interface
-
-![Screenshot from 2025-03-06 15-38-09](https://github.com/user-attachments/assets/04d5d2ef-5638-40b0-82f3-518f639ed440)
