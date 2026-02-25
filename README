@@ -1,10 +1,37 @@
-Objectifs :
-__________
+# 🎯 Objectifs du Projet  
+---
 
-    F1 : Connexion à l'ERP Odoo (utiliser un login/pwd dédié à la production)
-    F2 : Visualiser la fiche de votre entreprise
-    F3 : Visualiser la liste de vos produits avec leurs caratéristiques et image (Saisie des Articles dans Odoo)
-    F4 : Visualiser la liste des Ordres de Fabrication de ces produits (Saisie des OF dans Odoo) si possible en sélectionnant l'état (Confirmé, En cours, Fait, Annulé)
-    F5 : Pour les OF Confirmé permettre la modification de la quantité produite (passage à En cours puis Fait quand la totalité des produits ont été fabriqué)
+## 🔧 Fonctionnalités principales
+
+### **F1 — Connexion à l'ERP Odoo**
+Connexion sécurisée via un **login/mot de passe dédié à la production**.
+
+### **F2 — Consultation de la fiche entreprise**
+Affichage des informations de votre société directement depuis Odoo.
+
+### **F3 — Liste des produits**
+Visualisation de tous vos produits avec :
+- leurs caractéristiques,
+- leur image,
+- leurs informations techniques.  
+*(Correspond à la saisie des Articles dans Odoo)*
+
+### **F4 — Liste des Ordres de Fabrication (OF)**
+Affichage des OF liés aux produits, avec possibilité de filtrer par état :
+- 🟦 Confirmé  
+- 🟧 En cours  
+- 🟩 Fait  
+- 🟥 Annulé  
+*(Correspond à la saisie des OF dans Odoo)*
+
+### **F5 — Mise à jour des OF Confirmés**
+Pour les OF en état **Confirmé** :
+- modification de la quantité produite,
+- passage automatique à **En cours**,  
+- puis à **Fait** lorsque la production est terminée.
+
+---
+
+## 🖼️ Aperçu de l’interface
 
 ![Screenshot from 2025-03-06 15-38-09](https://github.com/user-attachments/assets/04d5d2ef-5638-40b0-82f3-518f639ed440)
